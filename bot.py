@@ -43,7 +43,7 @@ def main():
                 # Create an empty dict to hold our answers so we can use them in a reply.
                 answers = OrderedDict()
                 for acronym in acronyms:
-                    # Convert the acronmy to uppercase as a safety measure.
+                    # Convert the acronym to uppercase as a safety measure.
                     acronym = acronym.upper()
 
                     # Create a list to store multiple database results for each acronym.
