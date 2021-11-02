@@ -15,20 +15,20 @@ def main():
         user_agent="/u/MetalcoreAcronymBot",
         username=secrets['reddit_username'],
     )
-    print(reddit.user.me())
+    print(f"Logged in as: {reddit.user.me()}")
 
-    for comment in reddit.subreddit('ashirahprime').stream.comments(skip_existing=True):
+    for comment in reddit.subreddit('Metalcore').stream.comments(skip_existing=True):
         if comment.author == reddit.user.me():
             continue
-        print(f"comment = {comment}")
-        print(f"comment.body = {comment.body}")
         # Check for "!MetalcoreAcronymBot"
+        print(f"comment.body = {comment.body}")
         if comment.body == "!MetalcoreAcronymBot":
             # When we find it, we're going to look at the immediate parent comment
             # of the comment that has our summon.
             # Get the acronyms from the parent comment.
-            print(f"comment.parent().body = {comment.parent().body}")
-            acronyms = re.findall(r'[A-Z0-9]+', comment.parent().body)
+            acronyms = re.findall(r'[A-Z0-9]{2,}', comment.parent().body)
+            print(f"acronyms = {acronyms}")
+            acronyms = [i for i in acronyms if not i.isnumeric()]
             print(f"acronyms = {acronyms}")
             if acronyms:
                 # Check if we have a conversion for the acronym. If so, reply with it.
@@ -36,24 +36,22 @@ def main():
                 cur = con.cursor()
                 answers = OrderedDict()
                 for acronym in acronyms:
+                    acronym = acronym.upper()
                     answers[acronym] = []
                     cur.execute("SELECT * FROM acronyms WHERE acronym=:acronym", {
                         'acronym': acronym,
                     })
                     results = cur.fetchall()
-                    print(f"results = {results}")
                     if results:
                         for result in results:
                             answers[acronym].append(result[1])
 
-                print(f"answers = {answers}")
                 reply = ""
-    #            reply = f"I found the following acronyms: {', '.join(acronyms)}\n\n"
                 for acronym, names in answers.items():
                     if not names:
                         reply += f"I don't know what **{acronym}** is.\n\n"
                     else:
-                        reply += f"**{acronym}** could mean {', '.join(names)}.\n\n"
+                        reply += f"**{acronym}** could mean {', or '.join(names)}.\n\n"
 
                 reply += "---\n\n"
                 reply += "^(To add an acronym, reply with `!MetalcoreAcronymBot add ACRONYM:NAME`)\n\n"
@@ -65,11 +63,8 @@ def main():
         elif comment.body.startswith("!MetalcoreAcronymBot add"):
             # Check if this is the right syntax.
             addition = comment.body.split("!MetalcoreAcronymBot add")[1].strip()
-            print(f"addition = {addition}")
-            acronym = addition.split(":", 1)[0].strip()
-            print(f"acronym = {acronym}")
+            acronym = addition.split(":", 1)[0].strip().upper()
             name = addition.split(":", 1)[1].strip()
-            print(f"name = {name}")
 
             # Add it to the database.
             con = sqlite3.connect('metalcore.db')
@@ -85,11 +80,8 @@ def main():
         elif comment.body.startswith("!MetalcoreAcronymBot delete"):
             # Check if this is the right syntax.
             deletion = comment.body.split("!MetalcoreAcronymBot delete")[1].strip()
-            print(f"deletion = {deletion}")
-            acronym = deletion.split(":", 1)[0].strip()
-            print(f"acronym = {acronym}")
+            acronym = deletion.split(":", 1)[0].strip().upper()
             name = deletion.split(":", 1)[1].strip()
-            print(f"name = {name}")
 
             # Delete it from the database.
             con = sqlite3.connect('metalcore.db')
