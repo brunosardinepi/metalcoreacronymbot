@@ -76,7 +76,7 @@ def main():
             comment.reply(reply)
 
         elif comment.body.startswith("!MetalcoreAcronymBot add"):
-            # Convert the ACRONYM = NAME line into something readable.
+            # Convert the comment body into something readable.
             addition = comment.body.split("!MetalcoreAcronymBot add")[1].strip()
             acronym = addition.split(":", 1)[0].strip().upper()
             name = addition.split(":", 1)[1].strip()
@@ -97,7 +97,7 @@ def main():
             comment.reply("Thanks! I added your acronym to the database.")
 
         elif comment.body.startswith("!MetalcoreAcronymBot delete"):
-            # Convert the ACRONYM = NAME line into something readable.
+            # Convert the comment body into something readable.
             deletion = comment.body.split("!MetalcoreAcronymBot delete")[1].strip()
             acronym = deletion.split(":", 1)[0].strip().upper()
             name = deletion.split(":", 1)[1].strip()
