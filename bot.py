@@ -69,7 +69,8 @@ def main():
 
                 reply += "---\n\n"
                 reply += "^(To add an acronym, reply with `!MetalcoreAcronymBot add ACRONYM:NAME`)\n\n"
-                reply += "^(To delete an acronym, reply with `!MetalcoreAcronymBot delete ACRONYM:NAME`)"
+                reply += "^(To delete an acronym, reply with `!MetalcoreAcronymBot delete ACRONYM:NAME`)\n\n"
+                reply += "^(Please add/delete one band at a time. Be gentle, I'm a primitive bot.)"
             else:
                 reply = "I don't see any acronyms in all caps in the parent comment."
             # Send the reply to Reddit.
