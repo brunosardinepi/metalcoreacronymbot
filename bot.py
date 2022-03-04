@@ -84,17 +84,26 @@ def main():
             # Connect to the sqlite3 database.
             con = sqlite3.connect('metalcore.db')
             cur = con.cursor()
-            # Add the acronym, name pair to the database.
-            cur.execute("INSERT INTO acronyms values (:acronym, :name)", {
+
+            cur.execute("SELECT * FROM acronyms WHERE acronym=:acronym", {
                 'acronym': acronym,
-                'name': name,
             })
-            # Save the changes.
-            con.commit()
-            # Close the connection.
-            con.close()
-            # Send a thank you note.
-            comment.reply("Thanks! I added your acronym to the database.")
+            results = cur.fetchall()
+            if results:
+                # Send a reply telling the user we already have this acronym.
+                comment.reply("Thanks, but I already have that acronym in my database.")
+            else:
+                # Add the acronym, name pair to the database.
+                cur.execute("INSERT INTO acronyms values (:acronym, :name)", {
+                    'acronym': acronym,
+                    'name': name,
+                })
+                # Save the changes.
+                con.commit()
+                # Close the connection.
+                con.close()
+                # Send a thank you note.
+                comment.reply("Thanks! I added your acronym to the database.")
 
         elif comment.body.startswith("!MetalcoreAcronymBot delete"):
             # Convert the comment body into something readable.
